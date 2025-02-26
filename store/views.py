@@ -17,7 +17,73 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle, Paragraph, Image
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth.models import User
+from .serializers import VendedorSerializer
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .models import Product, Category
+from .serializers import ProductSerializer, CategorySerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 
+#ultimo cambio
+class VendedorCreateView(APIView):
+    def post(self, request):
+        serializer = VendedorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Vendedor creado correctamente"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VendedorListCreateView(ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = VendedorSerializer
+
+
+class VendedorUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = VendedorSerializer
+    lookup_field = 'id'  # Usaremos el ID del usuario para editar/eliminar
+
+    #permission_classes = [IsAuthenticatedOrReadOnly]  # Permite solo usuarios autenticados
+
+
+# Vista para listar y agregar productos
+class ProductListCreateView(ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    parser_classes = [MultiPartParser, FormParser]  # 🔹 Permite archivos (imágenes)
+
+    def create(self, request, *args, **kwargs):
+        print("\n🔹 SOLICITUD RECIBIDA EN /api/productos/ 🔹")
+        print("Datos recibidos en request.data:", request.data)
+        print("Archivos recibidos en request.FILES:", request.FILES)
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print("Producto guardado correctamente")
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print("Error en la validación:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# Vista para obtener, actualizar y eliminar productos
+class ProductUpdateDeleteView(RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'id'  # Buscar por ID del producto
+    parser_classes = [MultiPartParser, FormParser]  # 🔹 Permite actualizar imágenes
+
+
+class CategoryListView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 
 def search(request):
