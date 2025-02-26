@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: justify;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    form {
+        text-align: left; /* Para alinear el texto del formulario a la izquierda */
+
+    }
+
+    form p {
+        margin-bottom: 10px;
+    }
+
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"],
+    form input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 4px;
+        background-color: #190707;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #4cae4c;
+    }
+</style>
+
+    <form method="post">
+        <div class="form-container">
+            <h1>Confirmación de compra</h1>
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Campo de entrada para el DNI -->
+                <input type="text" id="id_dni" name="dni" placeholder="Ingrese el DNI">
+
+                <!-- Botón para consultar el DNI -->
+                <button type="button" id="btn-consultar">Validar DNI</button>
+
+                <br>
+                </br>
+
+                <!-- Contenedor para mostrar la respuesta -->
+
+                <!-- Campos de nombre y apellido (estos campos serán ocultos) -->
+                <div class="form-field">
+                    <input id="id_first_name" name="first_name">
+
+                    <input id="id_last_name" name="last_name">
+                  </div>
+                  <br>
+                </br>
+                  <!-- Campos de correo electrónico y dirección con espacio adicional -->
+                  <div class="form-field">
+                    <input type="email" name="email" placeholder="Correo electrónico" >
+                    <input type="text" name="address" placeholder="Dirección" >
+                  </div>
+                  <!-- Campos de código postal y ciudad con espacio adicional
+                  <div class="form-field">
+                    <input type="text" name="postal_code" placeholder="Código postal" >
+                    <input type="text" name="city" placeholder="Ciudad" >
+                  </div>  -->
+                <!-- Botón para confirmar la orden -->
+                <button type="submit">Confirmar orden</button>
+            </form>
+        </div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#btn-consultar').click(function() {
+            var dni = $('#id_dni').val();
+
+            // Realizar la solicitud AJAX
+            $.ajax({
+                type: 'POST',
+                url: '/consultar_dni/',  // URL de tu vista Django
+                data: {
+                    dni: dni,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    // Manejar la respuesta
+                    $('#respuesta').text(data);
+                    // Llenar los campos Nombre y Apellido con los datos de la respuesta
+                    $('#id_first_name').val(data.first_name);
+                    $('#id_last_name').val(data.last_name);
+                },
+                error: function(xhr, errmsg, err) {
+                    // Manejar el error
+                    console.error(xhr.status + ": " + xhr.responseText);
+                    alert('Error al consultar la API de RENIEC');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+Django==4.2
+pyyaml
+python-decouple
+psycopg2-binary==2.9.7
+gunicorn==21.2
+certifi
+pandas
+Pillow
+django-admin-charts
+requests~=2.32.3
+django-import-export
+reportlab~=4.3.1
+djangorestframework~=3.15.2

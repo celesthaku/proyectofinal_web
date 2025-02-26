@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .search-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        border: none;
+    }
+
+    .search-header {
+        background-color: #692b13; /* Dark header background */
+        padding: 40px 0; /* Ample padding for visual appeal */
+    }
+
+    .search-header h1 {
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .search-header p {
+        color: #d1d1d1;
+    }
+
+    .card {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header,
+    .btn-secondary {
+        background-color: #692b13; /* A softer dark background */
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268; /* Slightly darker on hover */
+    }
+
+    .card-body input[type="text"] {
+        margin-bottom: 20px; /* Add space below the input */
+    }
+
+    .product-grid {
+        padding: 20px 0;
+    }
+
+    .product-grid .col {
+        margin-bottom: 30px; /* Add space below each product */
+    }
+
+    .product-grid .badge {
+        font-size: 0.8em; /* Smaller badge text */
+    }
+
+    .product-grid .card-img-top {
+        height: 250px; /* Fixed image height for uniformity */
+        object-fit: cover; /* Ensure the image covers the area nicely */
+    }
+
+    .product-grid .card-body {
+        padding: 15px; /* Less padding for the card body */
+    }
+
+    .product-grid .card-footer {
+        background: none;
+        border-top: none;
+    }
+
+    .product-grid .btn-outline-dark {
+        width: 100%; /* Full width button */
+    }
+</style>
+
+<!-- Header -->
+<header class="search-header">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center">
+            <h1 class="display-4 fw-bolder">Buscar Productos</h1>
+            <p class="lead fw-normal mb-0">Encuentre lo que busque</p>
+        </div>
+    </div>
+</header>
+
+<div class="container search-container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    Inicia Tu Descubrimiento :)
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'search' %}">
+                        {% csrf_token %}
+                        <input type="text" class="form-control" placeholder="Encuentre su ideal..." name="searched">
+                        <div class="d-flex justify-content-center align-items-center">
+                        <button type="submit" class="btn btn-secondary mt-3">
+                            Buscar 
+                        </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Here comes your search results grid -->
+        </div>
+    </div>
+</div>
+
+<!-- Search Results Grid -->
+<div class="container product-grid">
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        <!-- Your search results loop -->
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<div class="container">
+<br/>
+
+
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <center>
+        <h5 class="card-title">{{ product.name }}</h5>
+        <br/>
+        <p class="card-text justified">{{ product.description }}</p>
+
+        {% if product.is_sale %}
+        <div class="d-flex justify-content-center small text-warning mb-2">
+                <div class="bi-star-fill"></div>
+                &nbsp;&nbsp;¡En oferta!&nbsp;&nbsp;
+                <div class="bi-star-fill"></div>
+                </div>
+
+                <!-- Product price-->
+                <strike>
+                S/.{{ product.price }}
+                </strike>
+                &nbsp;
+                S/.{{ product.sale_price }}
+                <p class="card-text justified">Contáctenos al +51 926 780 600 o visítenos en Jr. San Martín de Porres 108, Huánuco. ¡Lo esperamos!</p>
+
+
+
+        {% else %}
+            S/.{{ product.price }}
+            <p class="card-text justified">Contáctenos al +51 926 780 600 o visítenos en Jr. San Martín de Porres 108, Huánuco. ¡Lo esperamos!</p>
+        {% endif %}
+            <br/><br/>
+            {% if user.is_authenticated %}
+<div class="row justify-content-center">
+    <div class="col-md-2">Cantidad:</div>
+                <div class="col-md-2">
+                <select class="form-select form-select-sm" id="qty-cart">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                </div>
+            </div>
+            <br/><br/>
+        <a href="{% url 'home'%}" class="btn btn-secondary">Inicio</a>
+        <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart">Añadir a carrito</button>
+        {% endif %}
+    </center>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+<script>
+// la funcion JavaScript (con AJAX, para manejo asincrono) manejará la solicitud de forma asíncrona.
+// lo que se quiere lograr es agregar un producto al carrito de compras sin recargar la página,
+// mediante una solicitud AJAX para enviar los datos al servidor y luego actualizar la cantidad de productos en el carrito.
+$(document).on('click', '#add-cart', function(e){
+    e.preventDefault();
+    $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_add' %}',
+        data: {
+    product_id: $('#add-cart').val(),
+    product_qty: $('#qty-cart option:selected').text(),
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+    action: 'post'
+        },
+
+        success: function(json){
+            //console.log(json)
+            document.getElementById("cart_quantity").textContent = json.qty
+            location.reload();
+        },
+
+        error: function(xhr, errmsg, err){
+
+        }
+
+
+    });
+
+
+
+})
+
+
+
+
+</script>
+
+
+{% endblock %}
