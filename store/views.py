@@ -27,9 +27,16 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+
 
 #ultimo cambio
+
 class VendedorCreateView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
+
     def post(self, request):
         serializer = VendedorSerializer(data=request.data)
         if serializer.is_valid():
@@ -41,14 +48,17 @@ class VendedorCreateView(APIView):
 class VendedorListCreateView(ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = VendedorSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
 
 
 class VendedorUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = VendedorSerializer
     lookup_field = 'id'  # Usaremos el ID del usuario para editar/eliminar
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
 
-    #permission_classes = [IsAuthenticatedOrReadOnly]  # Permite solo usuarios autenticados
 
 
 # Vista para listar y agregar productos
@@ -56,6 +66,8 @@ class ProductListCreateView(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     parser_classes = [MultiPartParser, FormParser]  # 🔹 Permite archivos (imágenes)
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
 
     def create(self, request, *args, **kwargs):
         print("\n🔹 SOLICITUD RECIBIDA EN /api/productos/ 🔹")
@@ -79,12 +91,14 @@ class ProductUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
     lookup_field = 'id'  # Buscar por ID del producto
     parser_classes = [MultiPartParser, FormParser]  # 🔹 Permite actualizar imágenes
-
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
 
 class CategoryListView(ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
 
 def search(request):
 	# manera de preguntarse si llenaron el formulario correspondiente

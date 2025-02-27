@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-x4m$gfeda-r+)u05g*bzm%8#_vz&8-wl^3epo45gqi#_eqwvtq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['arturoalonsor.pythonanywhere.com']
+ALLOWED_HOSTS = ['arturoalonsor.pythonanywhere.com'] # ['127.0.0.1', 'localhost', '192.168.0.4'] #
 
 
 # Agregamos store, cart y payment, las apps del proyecto central ecom
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'cart',
     'import_export',
     'rest_framework',
+    'rest_framework.authtoken',  # Agregar autenticación con tokens
 ]
 
 MIDDLEWARE = [
@@ -85,6 +86,21 @@ DATABASES = {
             }
     }
 }
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tienda',
+        'USER' : 'root',
+        'PASSWORD' : 'root',
+        'HOST' : '127.0.0.1',
+        'PORT' : '3306',
+        'OPTIONS' : {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            }
+    }
+}
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -135,3 +151,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+#LAS APIS REST NECESITARAN AUTENTICACIÓN CON TOKENS
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
